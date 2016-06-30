@@ -8,15 +8,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/download" />
             <option value="$PROJECT_DIR$/example" />
-            <option value="$PROJECT_DIR$/update-download" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/download" />
             <option value="$PROJECT_DIR$/example" />
-            <option value="$PROJECT_DIR$/update-download" />
           </set>
         </option>
       </GradleProjectSettings>
