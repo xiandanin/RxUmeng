@@ -12,8 +12,6 @@ import java.io.File;
  * 下载完成的广播
  *
  * @author dengyuhan
- * @desc
- * @create 2016/6/29 9:35
  */
 public class DownloadBroadcastReceiver extends BroadcastReceiver {
 
@@ -26,7 +24,10 @@ public class DownloadBroadcastReceiver extends BroadcastReceiver {
                 downloadManager.remove(Download.getDownloadId());
             } else if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 //下载完成
-                install(context, downloadManager.getUriForDownloadedFile(Download.getDownloadId()).getPath());
+                Uri downloadedFile = downloadManager.getUriForDownloadedFile(Download.getDownloadId());
+                if (downloadedFile!=null){
+                    install(context, downloadedFile.getPath());
+                }
             }
             Download.setDownloadId(0);
             context.unregisterReceiver(this);

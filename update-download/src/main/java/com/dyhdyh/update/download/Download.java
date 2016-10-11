@@ -11,8 +11,6 @@ import java.io.File;
 /**
  * 下载器
  * @author dengyuhan
- * @desc
- * @create 2016/6/29 16:58
  */
 public class Download {
     private static long downloadId;
