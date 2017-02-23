@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_download_title">正在更新%s</string>
+    <string name="default_download_info">%d%%</string>
+    <string name="default_download_complete_title">最新版本下载完成</string>
+    <string name="default_download_complete_text">点击安装</string>
+</resources>

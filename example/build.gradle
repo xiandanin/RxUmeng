@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.dyhdyh.update.example"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -22,5 +22,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.4.0'
-    compile project(':update-download')
+    //compile project(':update')
+    compile 'com.dyhdyh.update:update:1.1.1'
 }

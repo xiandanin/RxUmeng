@@ -1,1 +1,1 @@
-include ':example', ':update-download'
+include ':example', ':update'
