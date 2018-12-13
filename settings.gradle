@@ -1,1 +1,1 @@
-include ':example', ':update'
+include ':app', ':rxumeng-social'
