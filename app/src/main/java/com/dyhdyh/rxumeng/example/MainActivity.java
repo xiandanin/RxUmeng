@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
      * @param shareMedia
      */
     private void clickPlatformLogin(SHARE_MEDIA shareMedia) {
-        if (!RxUmengSocial.get().hasPermissions(this)){
+        if (!RxUmengSocial.get().hasPermissions(this)) {
             return;
         }
         RxUmengSocial.get()
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickPlatformShare(SHARE_MEDIA shareMedia) {
         tv_log.setText("");
-        if (!RxUmengSocial.get().hasPermissions(this)){
+        if (!RxUmengSocial.get().hasPermissions(this)) {
             return;
         }
         RxUmengSocial.get()
@@ -128,7 +128,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(SHARE_MEDIA result) {
                         LoadingDialog.cancel();
 
-                        Toast.makeText(MainActivity.this, result + "分享成功", Toast.LENGTH_SHORT).show();
+                        if (result != SHARE_MEDIA.WEIXIN && result != SHARE_MEDIA.WEIXIN_CIRCLE) {
+                            Toast.makeText(MainActivity.this, result + "分享成功", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                     @Override
