@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tv_log = findViewById(R.id.tv_log);
+
     }
 
     public void clickWechatLogin(View view) {
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
      * @param shareMedia
      */
     private void clickPlatformLogin(SHARE_MEDIA shareMedia) {
+        //检查权限(没有会先申请)
         if (!RxUmengSocial.get().hasPermissions(this)) {
             return;
         }
@@ -93,11 +95,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         LoadingDialog.cancel();
+
                         if (e instanceof UmengPlatformInstallException) {
+                            //没有安装需要的客户端的异常(微博可以用网页授权，所以微博不会检查)
                             Toast.makeText(MainActivity.this, "没有安装" + ((UmengPlatformInstallException) e).getShareMedia() + "客户端", Toast.LENGTH_SHORT).show();
                         } else if (e instanceof UmengPlatformCancelException) {
+                            //用户取消操作会回调这里
                             Toast.makeText(MainActivity.this, "取消登录", Toast.LENGTH_SHORT).show();
                         } else {
+                            //其它失败的异常
                             Toast.makeText(MainActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -128,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(SHARE_MEDIA result) {
                         LoadingDialog.cancel();
 
+                        //6月份新版微信客户端发布后，不再返回用户是否分享完成事件，即原先的cancel事件和success事件将统一为success事件。
                         if (result != SHARE_MEDIA.WEIXIN && result != SHARE_MEDIA.WEIXIN_CIRCLE) {
                             Toast.makeText(MainActivity.this, result + "分享成功", Toast.LENGTH_SHORT).show();
                         }
@@ -137,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         LoadingDialog.cancel();
+
                         if (e instanceof UmengPlatformInstallException) {
                             Toast.makeText(MainActivity.this, "没有安装" + ((UmengPlatformInstallException) e).getShareMedia() + "客户端", Toast.LENGTH_SHORT).show();
                         } else if (e instanceof UmengPlatformCancelException) {
