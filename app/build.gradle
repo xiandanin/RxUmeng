@@ -48,7 +48,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$rootProject.ext.android.supportVersion"
 
-    implementation 'com.umeng.umsdk:common:1.5.4'
+    implementation 'com.umeng.umsdk:common:2.0.1'
     implementation 'com.umeng.umsdk:utdid:1.1.5.3'
 
     implementation "com.umeng.umsdk:share-core:$rootProject.ext.android.umengVersion"
@@ -61,7 +61,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation 'com.dyhdyh.loadingbar:loadingbar:1.4.7'
+    implementation 'com.dyhdyh.loadingbar2:loadingbar:2.0.1'
 
     implementation project(':rxumeng-social')
 }

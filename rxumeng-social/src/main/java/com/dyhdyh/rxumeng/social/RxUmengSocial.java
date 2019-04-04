@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.v4.app.ActivityCompat;
@@ -32,18 +31,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RxUmengSocial {
 
-    private static final String PACKAGENAME_FACEBOOK = "com.facebook.katana";
-    private static final String PACKAGENAME_INSTAGRAM = "com.instagram.android";
-    private static final String PACKAGENAME_WECHAT = "com.tencent.mm";
-    private static final String PACKAGENAME_WECHAT_LAUNCHER = "com.tencent.mm.ui.LauncherUI";
-    private static final String PACKAGENAME_QQ = "com.tencent.mobileqq";
-    private static final String PACKAGENAME_QQLITE = "com.tencent.qqlite";
-    private static final String PACKAGENAME_QQ_LAUNCHER = "com.tencent.mobileqq.activity.HomeActivity";
-    public static final String PACKAGENAME_WEIBO = "com.sina.weibo";
-    private static final String PACKAGENAME_WEIBO_LAUNCHER = "com.sina.weibo.MainTabActivity";
-
     private UmengSocialResumeCallback mCallback;
     private SHARE_MEDIA mShareMedia;
+    //是否需要检查平台可用性
+    private boolean mCheckPlatform = true;
 
     private static RxUmengSocial mInstance;
 
@@ -55,6 +46,8 @@ public class RxUmengSocial {
             if (mInstance == null) {
                 mInstance = new RxUmengSocial();
             }
+            mInstance.mShareMedia = null;
+            mInstance.mCheckPlatform = true;
         }
         return mInstance;
     }
@@ -78,12 +71,22 @@ public class RxUmengSocial {
         return this;
     }
 
+    /**
+     * 是否需要检查平台可用性
+     *
+     * @param checkPlatform 默认true
+     */
+    public RxUmengSocial setCheckPlatform(boolean checkPlatform) {
+        this.mCheckPlatform = checkPlatform;
+        return this;
+    }
+
     public Observable<UmengAuthResult> getPlatformInfo(final Activity activity) {
         final UMShareAPI shareAPI = UMShareAPI.get(activity.getApplicationContext());
         return Observable.create(new ObservableOnSubscribe<UmengAuthResult>() {
             @Override
             public void subscribe(ObservableEmitter<UmengAuthResult> emitter) throws Exception {
-                if (!isPlatformAvailable(activity, mShareMedia)) {
+                if (mCheckPlatform && !isPlatformAvailable(activity, mShareMedia)) {
                     emitter.onError(new UmengPlatformInstallException(mShareMedia));
                 } else {
                     shareAPI.getPlatformInfo(activity, mShareMedia,
@@ -160,7 +163,7 @@ public class RxUmengSocial {
         return Observable.create(new ObservableOnSubscribe<SHARE_MEDIA>() {
             @Override
             public void subscribe(ObservableEmitter<SHARE_MEDIA> emitter) throws Exception {
-                if (!isPlatformAvailable(activity, mShareMedia)) {
+                if (mCheckPlatform && !isPlatformAvailable(activity, mShareMedia)) {
                     emitter.onError(new UmengPlatformInstallException(mShareMedia));
                 } else {
                     ShareAction action = function.apply(
@@ -174,6 +177,7 @@ public class RxUmengSocial {
         }).subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
 
     /*--------Activity 要重写的方法----------*/
 
@@ -260,22 +264,11 @@ public class RxUmengSocial {
             //新浪可以用网页 直接true
             return true;
         } else if (SHARE_MEDIA.QQ == share_media || SHARE_MEDIA.QZONE == share_media) {
-            //QQ和QQLite
-            return isInstall(activity, PACKAGENAME_QQ) ||
-                    isInstall(activity, PACKAGENAME_QQLITE);
+            //QQ
+            return UmengPlatformInfo.isInstall(activity, UmengPlatformInfo.PackageNames.QQ);
         } else {
             return UMShareAPI.get(activity).isInstall(activity, share_media);
         }
     }
 
-
-    private boolean isInstall(Context context, String packageName) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
-            return packageInfo != null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

@@ -1,5 +1,7 @@
-### 运行Demo
+## 运行Demo
 要运行Demo请查看[RunDemo.md](RunDemo.md)
+
+## 友盟分享
 
 ### 截图
 ![](screenshot/2.gif)
@@ -9,7 +11,7 @@
 
 -|RxUmeng - Social|umsdk:common|umsdk:utdid|umsdk:share-*
 :-:|:-:|:-:|:-:|:-:
-对应版本|1.0.0|1.5.4|1.1.5.3|6.9.4
+对应版本|1.0.1|2.0.1|1.1.5.3|6.9.4
 
 ### Gradle引入
 引入友盟SDK需要在根目录gradle加入友盟的仓库地址
@@ -23,10 +25,10 @@ allprojects {
 ```
 ```
 //分享
-implementation 'com.dyhdyh.rxumeng:rxumeng-social:1.0.0'
+implementation 'com.dyhdyh.rxumeng:rxumeng-social:1.0.1'
 
 //友盟sdk基础组件
-implementation 'com.umeng.umsdk:common:1.5.4'
+implementation 'com.umeng.umsdk:common:2.0.1'
 implementation 'com.umeng.umsdk:utdid:1.1.5.3'
 
 //友盟分享sdk
@@ -159,13 +161,20 @@ RxUmengSocial.get()
         });
 ```
 
-#### 分享
+### 分享
 ```
 if (!RxUmengSocial.get().hasPermissions(this)) {
     return;
 }
+//如果关闭了自动检查 则需要手动检查平台是否可用
+if (!RxUmengSocial.get().isPlatformAvailable(this, shareMedia)) {
+    Toast.makeText(MainActivity.this, "没有安装" + shareMedia + "客户端", Toast.LENGTH_SHORT).show();
+    return;
+}
 RxUmengSocial.get()
         .setShareMedia(shareMedia)
+        //是否开启自动检查平台可用性 默认true
+        .setCheckPlatform(false)
         //分享图片
         //.shareImage(activity, umImage)
         //分享URL
@@ -180,8 +189,8 @@ RxUmengSocial.get()
             public void onNext(SHARE_MEDIA result) {
                 LoadingDialog.cancel();
 
-                //6月份新版微信客户端发布后，不再返回用户是否分享完成事件，即原先的cancel事件和success事件将统一为success事件。
-                if (result != SHARE_MEDIA.WEIXIN && result != SHARE_MEDIA.WEIXIN_CIRCLE) {
+                //检查平台是否有成功事件
+                if (UmengPlatformInfo.isHasShareSuccessEvent(result)) {
                     Toast.makeText(MainActivity.this, result + "分享成功", Toast.LENGTH_SHORT).show();
                 }
 
@@ -210,3 +219,37 @@ RxUmengSocial.get()
 >[微信团队 - 分享功能调整](https://mp.weixin.qq.com/cgi-bin/announce?action=getannouncement&announce_id=11526372695t90Dn&lang=zh_CN)
 >
 >6月份新版微信客户端发布后，不再返回用户是否分享完成事件，即原先的cancel事件和success事件将统一为success事件
+
+
+## 系统分享
+`RxSystemSocial`提供了用系统的方式来分享内容
+
+```
+RxSystemSocial.get()
+        .setShareMedia(shareMedia)
+        .setListener(new OnSystemSocialListener() {
+            @Override
+            public void onError(SHARE_MEDIA share_media, Throwable e) {
+                if (e instanceof UmengPlatformInstallException) {
+                    Toast.makeText(MainActivity.this, "没有安装" + share_media + "客户端", Toast.LENGTH_SHORT).show();
+                } else if (e instanceof ActivityNotFoundException) {
+                    //这个平台通过系统分享 分享不了这个内容
+                    Toast.makeText(MainActivity.this, share_media + "不支持分享该内容", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        })
+        //.startSystemShareFile(context, file)
+        .startSystemShareText(context, "我只是个标题", "我也是只是个内容");
+```
+
+### 平台工具
+```
+//获取所有支持平台的包名
+final List<String> packageNames = UmengPlatformInfo.getPackageNames();
+
+//获取指定平台的包名
+final String packageName = UmengPlatformInfo.getPackageName(SHARE_MEDIA.WEIXIN);
+final List<String> packageNames = UmengPlatformInfo.getPackageNames(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.QQ);
+```

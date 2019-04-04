@@ -6,7 +6,7 @@ import android.content.Context;
 import com.dyhdyh.rxumeng.social.RxUmengSocial;
 import com.dyhdyh.rxumeng.social.UmengSocialRegisterCallback;
 import com.dyhdyh.rxumeng.social.UmengSocialResumeCallback;
-import com.dyhdyh.widget.loading.dialog.LoadingDialog;
+import com.dyhdyh.widget.loadingbar2.LoadingBar;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 
@@ -39,7 +39,7 @@ public class MainApplication extends Application {
             public void onResume(Context context) {
                 //调用分享的Activity的onResume生命周期回调
                 //Demo中是统一在这里处理了Loading的关闭
-                LoadingDialog.cancel();
+                LoadingBar.dialog(context).cancel();
             }
         });
     }
