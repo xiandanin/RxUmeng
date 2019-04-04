@@ -244,6 +244,30 @@ RxSystemSocial.get()
         .startSystemShareText(context, "我只是个标题", "我也是只是个内容");
 ```
 
+#### 分享文件的配置
+如果需要分享文件，还需要配置`FileProvider`
+
+在`AndroidManifest.xml`中添加`FileProvider`
+
+```
+<provider
+    android:name="android.support.v4.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+</provider>
+```
+在`res`中创建`xml`文件夹，并创建`file_paths.xml`
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <root-path name="root_dir" path="" />
+</paths>
+```
 ### 平台工具
 ```
 //获取所有支持平台的包名
