@@ -36,6 +36,27 @@ public class RxUmengSocial {
     //是否需要检查平台可用性
     private boolean mCheckPlatform = true;
 
+    //必须的权限
+    private final String[] mRequiredPermissionList = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+    };
+
+    //必须+可选的权限
+    private final String[] mAllPermissionList = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.READ_LOGS,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.SET_DEBUG_APP,
+            Manifest.permission.SYSTEM_ALERT_WINDOW,
+            Manifest.permission.GET_ACCOUNTS,
+            Manifest.permission.WRITE_APN_SETTINGS
+    };
+
     private static RxUmengSocial mInstance;
 
     private RxUmengSocial() {
@@ -197,58 +218,64 @@ public class RxUmengSocial {
 
     /*--------Activity 要重写的方法----------*/
 
+    public boolean hasPermissions(Activity activity) {
+        return hasPermissions(activity, false);
+    }
 
     /**
      * 是否有权限(没有权限会请求申请)
      *
      * @param activity
+     * @param optional 是否包括可选权限
      * @return
      */
-    public boolean hasPermissions(Activity activity) {
-        if (!isSocializePermissions(activity)) {
-            requestPermissions(activity);
-            return false;
+    public boolean hasPermissions(Activity activity, boolean optional) {
+        int requestCode = 123;
+        if (optional) {
+            if (!isAllPermissions(activity)) {
+                ActivityCompat.requestPermissions(activity, mAllPermissionList, requestCode);
+                return false;
+            }
+        } else {
+            if (!isRequiredPermissions(activity)) {
+                ActivityCompat.requestPermissions(activity, mRequiredPermissionList, requestCode);
+                return false;
+            }
         }
         return true;
     }
 
 
     /**
-     * 请求权限
-     *
-     * @param activity
-     */
-    private void requestPermissions(Activity activity) {
-        String[] mPermissionList = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE,
-                Manifest.permission.READ_LOGS, Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SET_DEBUG_APP,
-                Manifest.permission.SYSTEM_ALERT_WINDOW, Manifest.permission.GET_ACCOUNTS,
-                Manifest.permission.WRITE_APN_SETTINGS};
-        ActivityCompat.requestPermissions(activity, mPermissionList, 123);
-    }
-
-    /**
-     * 是否有权限
+     * 是否有必须的权限
      *
      * @param activity
      * @return
      */
-    private boolean isSocializePermissions(Activity activity) {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_LOGS) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.SET_DEBUG_APP) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_APN_SETTINGS) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(activity, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        } else {
-            return true;
+    private boolean isRequiredPermissions(Activity activity) {
+        for (String permission : mRequiredPermissionList) {
+            boolean granted = ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED;
+            if (granted) {
+                return false;
+            }
         }
+        return true;
+    }
+
+    /**
+     * 是否有可选的权限
+     *
+     * @param activity
+     * @return
+     */
+    private boolean isAllPermissions(Activity activity) {
+        for (String permission : mAllPermissionList) {
+            boolean granted = ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED;
+            if (granted) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

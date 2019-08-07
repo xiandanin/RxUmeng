@@ -200,7 +200,8 @@ public class MainActivity extends AppCompatActivity {
         RxUmengSocial.get()
                 .setCheckPlatform(false)//前面手动检查了 把自动检查设为false
                 .setShareMedia(shareMedia)
-                .shareUrl(this, "我只是个标题", "我也是只是个内容", new UMImage(this, R.mipmap.ic_launcher), "https://github.com/dengyuhan/RxUmeng")
+                //图片不能用mipmap
+                .shareUrl(this, "我只是个标题", "我也是只是个内容", new UMImage(this, R.drawable.logo), "https://github.com/dengyuhan/RxUmeng")
                 .subscribe(new Observer<SHARE_MEDIA>() {
                     @Override
                     public void onSubscribe(Disposable d) {

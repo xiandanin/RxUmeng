@@ -11,7 +11,7 @@
 
 -|RxUmeng - Social|umsdk:common|umsdk:utdid|umsdk:share-*
 :-:|:-:|:-:|:-:|:-:
-对应版本|1.0.1|2.0.1|1.1.5.3|6.9.4
+对应版本|1.0.2|[2.0.1](https://bintray.com/umsdk/release/common)|[1.1.5.3](https://bintray.com/umsdk/release/utdid)|[6.9.6](https://bintray.com/umsdk/release/share-core)
 
 ### Gradle引入
 引入友盟SDK需要在根目录gradle加入友盟的仓库地址
@@ -32,14 +32,14 @@ implementation 'com.umeng.umsdk:common:2.0.1'
 implementation 'com.umeng.umsdk:utdid:1.1.5.3'
 
 //友盟分享sdk
-implementation 'com.umeng.umsdk:share-core:6.9.4'
-implementation 'com.umeng.umsdk:share-wx:6.9.4'
-implementation 'com.umeng.umsdk:share-qq:6.9.4'
-implementation 'com.umeng.umsdk:share-sina:6.9.4'
+implementation 'com.umeng.umsdk:share-core:6.9.6'
+implementation 'com.umeng.umsdk:share-wx:6.9.6'
+implementation 'com.umeng.umsdk:share-qq:6.9.6'
+implementation 'com.umeng.umsdk:share-sina:6.9.6'
 
 //RxJava
-implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
-implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
 //AppCompat
 implementation 'com.android.support:appcompat-v7:28.0.0'
@@ -57,6 +57,7 @@ android {
     }
 }
 ```
+
 
 ### 初始化
 [基础组件初始化](https://developer.umeng.com/docs/66632/detail/66890#h2-u521Du59CBu53166)
@@ -215,6 +216,48 @@ RxUmengSocial.get()
         });
 ```
 
+
+### 权限配置和分享文件（可选）
+#### 可选权限
+如果配置了可选权限，可以使用`RxUmengSocial.get().hasPermissions(this, true)`检测必须和可选的权限
+
+```
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.CALL_PHONE" />
+<uses-permission android:name="android.permission.READ_LOGS" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.SET_DEBUG_APP" />
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+<uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
+```
+
+#### 分享文件
+如果需要分享文件，还需要配置`FileProvider`
+
+在`AndroidManifest.xml`中添加`FileProvider`
+
+```
+<provider
+    android:name="android.support.v4.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+</provider>
+```
+在`res`中创建`xml`文件夹，并创建`file_paths.xml`
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <root-path name="root_dir" path="" />
+</paths>
+```
+
+
 ### 关于微信分享的回调
 >[微信团队 - 分享功能调整](https://mp.weixin.qq.com/cgi-bin/announce?action=getannouncement&announce_id=11526372695t90Dn&lang=zh_CN)
 >
@@ -244,30 +287,6 @@ RxSystemSocial.get()
         .startSystemShareText(context, "我只是个标题", "我也是只是个内容");
 ```
 
-#### 分享文件的配置
-如果需要分享文件，还需要配置`FileProvider`
-
-在`AndroidManifest.xml`中添加`FileProvider`
-
-```
-<provider
-    android:name="android.support.v4.content.FileProvider"
-    android:authorities="${applicationId}.fileprovider"
-    android:exported="false"
-    android:grantUriPermissions="true">
-    <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/file_paths" />
-</provider>
-```
-在`res`中创建`xml`文件夹，并创建`file_paths.xml`
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <root-path name="root_dir" path="" />
-</paths>
-```
 ### 平台工具
 ```
 //获取所有支持平台的包名
