@@ -57,6 +57,12 @@ android {
     }
 }
 ```
+QQ用到了HttpClient，但是Android P已经彻底移除了相关api，所以还得在 `AndroidManifest.xml`的`application`中加入
+```
+<uses-library
+    android:name="org.apache.http.legacy"
+    android:required="false" />
+```
 
 
 ### 初始化
